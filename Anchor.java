@@ -10,5 +10,8 @@ public class Anchor implements WebComponent {
 	public Point getPoint(double ratio) {
 		return point;
 	}
+	public String toString() {
+		return "Anchor at "+point.toString();
+	}
 
 }

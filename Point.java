@@ -11,4 +11,7 @@ public class Point {
 	public double getY() {
 		return this.y;
 	}
+	public String toString() {
+		return String.format("(%.2f,%.2f)", x,y);
+	}
 }

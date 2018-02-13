@@ -24,5 +24,14 @@ public class Strand implements WebComponent {
 		double y3 = start.getY() + (end.getY()-start.getY())*ratio;
 		return new Point(x3,y3);
 	}
+	
+	public double getLength() {
+		//distance formula
+		return Math.sqrt(Math.pow(start.getX()-end.getX(),2)+Math.pow(start.getY()-end.getY(), 2));
+	}
+	
+	public String toString() {
+		return String.format("Strand from "+start.toString()+" to "+end.toString());
+	}
 
 }
