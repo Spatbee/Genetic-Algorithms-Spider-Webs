@@ -1,12 +1,39 @@
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.ArrayList;
 
-public class WebDrawer {
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+
+
+public class WebDrawer extends JPanel{
 	private Web web;
 	private ArrayList<WebComponent> webPieces;
+	private int width;
+	private int height;
+	
+	
+	public WebDrawer() {
+		this(new Web());
+	}
 	
 	public WebDrawer(Web web) {
 		this.web = web;
+		this.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+	}
+	
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		int width = this.getWidth();
+		int height = this.getHeight();
+		System.out.println(width+" "+height);
+		//clears canvas
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, width, height);
+		//draws anchors
 		
+		//draws strands
 	}
 	
 	/**
@@ -60,13 +87,17 @@ public class WebDrawer {
 		return s;
 	}
 	
+	public Web getWeb() {
+		return web;
+	}
+	
 	public static void main(String[] args) {
 		Web web = new Web();
 		WebDrawer webDrawer = new WebDrawer(web);
 		System.out.println("Web:");
 		System.out.println(web);
 		System.out.println();
-		webDrawer.buildWeb(4, 4);
+		webDrawer.buildWeb(4, 15);
 		System.out.println(webDrawer);
 	}
 }
