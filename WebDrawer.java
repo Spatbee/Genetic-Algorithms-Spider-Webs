@@ -23,17 +23,24 @@ public class WebDrawer extends JPanel{
 		this.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 	}
 	
+	public static int rangeFit(int size, double loc) {
+		int min = size/25;
+		int max = size*14/15;
+		loc = (loc+1)/2;
+		return (int) ((max-min)*loc+min);
+	}
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		int width = this.getWidth();
 		int height = this.getHeight();
-		System.out.println(width+" "+height);
 		//clears canvas
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, width, height);
-		//draws anchors
-		
-		//draws strands
+		//draws web
+		for(WebComponent wc : webPieces) {
+			wc.drawSelf(g, this);
+		}
 	}
 	
 	/**

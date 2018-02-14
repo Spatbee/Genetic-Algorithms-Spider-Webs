@@ -1,3 +1,7 @@
+import java.awt.Color;
+import java.awt.Graphics;
+
+import javax.swing.JPanel;
 
 public class Strand implements WebComponent {
 	private Point start, end;
@@ -33,5 +37,12 @@ public class Strand implements WebComponent {
 	public String toString() {
 		return String.format("Strand from "+start.toString()+" to "+end.toString());
 	}
-
+	
+	public void drawSelf(Graphics g, JPanel canvas) {
+		int width = canvas.getWidth();
+		int height = canvas.getHeight();
+		g.setColor(Color.GRAY);
+		g.drawLine(WebDrawer.rangeFit(width, start.getX()), WebDrawer.rangeFit(height, start.getY())
+				,WebDrawer.rangeFit(width, end.getX()), WebDrawer.rangeFit(height, end.getY()));
+	}
 }
