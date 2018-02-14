@@ -68,7 +68,7 @@ public class WebDrawer extends JPanel{
 		//adds strands until out of web
 		double totalWebUsed = 0;
 		while(totalWebUsed <= webLength) {
-			Strand newStrand = web.getNext(webPieces);
+			Strand newStrand = web.getNext(webPieces, numAnchors);
 			webPieces.add(newStrand);
 			//if the strand added was length 0, kill the web
 			if(newStrand.getLength()==0) {

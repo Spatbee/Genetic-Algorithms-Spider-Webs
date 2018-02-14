@@ -26,12 +26,13 @@ public class Web {
 		return startString+endString+startRatioString+endRatioString;
 	}
 	
-	public Strand getNext(ArrayList<WebComponent> pieces) {
+	public Strand getNext(ArrayList<WebComponent> pieces, int numAnchors) {
+		int numStrands = pieces.size()-numAnchors;
 		int numPieces = pieces.size();
-		int startIndex = Math.floorMod((int)Math.floor(this.start.evaluate()),numPieces);
-		int endIndex = Math.floorMod((int)Math.floor(this.end.evaluate()),numPieces);
-		double fixedStartRatio = this.startRatio.evaluate();
-		double fixedEndRatio = this.endRatio.evaluate();
+		int startIndex = Math.floorMod((int)Math.floor(this.start.evaluate(numAnchors, numStrands)),numPieces);
+		int endIndex = Math.floorMod((int)Math.floor(this.end.evaluate(numAnchors, numStrands)),numPieces);
+		double fixedStartRatio = this.startRatio.evaluate(numAnchors, numStrands);
+		double fixedEndRatio = this.endRatio.evaluate(numAnchors, numStrands);
 		if(fixedStartRatio<0) fixedStartRatio=0;
 		else if(fixedStartRatio>1) fixedStartRatio=1;
 		if(fixedEndRatio<0) fixedEndRatio=0;

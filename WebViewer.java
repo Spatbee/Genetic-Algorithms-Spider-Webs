@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 public class WebViewer extends JFrame {
 	private final static String windowTitle = "Web Viewer";
 	private int numAnchors = 5;
-	private int webLength = 15;
+	private int webLength = 100;
 	
 	public WebViewer(WebDrawer webDrawer) {
 		super(windowTitle);
@@ -100,7 +100,9 @@ public class WebViewer extends JFrame {
 		
 		controlPanel.add(webLengthInfo);
 		
-		
+		JButton save = new JButton("Save");
+		//TODO add save functionality
+		controlPanel.add(save);
 		
 		this.add(controlPanel);
 		

@@ -15,7 +15,7 @@ public class GSConstant implements GeneSegment {
 		if(rand<.1) {
 			return GeneCreator.newGene();
 		}
-		else if(rand<.3) {
+		if(rand<.3) {
 			double newValue = this.value + (Math.random()-.5);
 			return new GSConstant(newValue);
 		}
@@ -24,7 +24,7 @@ public class GSConstant implements GeneSegment {
 		}
 	}
 
-	public double evaluate() {
+	public double evaluate(int numAnchors, int numStrands) {
 		return this.value;
 	}
 
