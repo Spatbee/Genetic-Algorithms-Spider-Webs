@@ -41,6 +41,7 @@ public class WebDrawer extends JPanel{
 		int height = this.getHeight();
 		//clears canvas
 		g.setColor(Color.WHITE);
+		this.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 		g.fillRect(0, 0, width, height);
 		//draws web
 		for(WebComponent wc : webPieces) {
