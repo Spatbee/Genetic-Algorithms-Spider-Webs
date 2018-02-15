@@ -5,16 +5,19 @@ public class GeneCreator {
 		double rand = Math.random();
 		//non-terminating
 		if(t<.33) {
-			if(rand<.1) return new GSLog();
-			if(rand<.2) return new GSMultiply();
-			if(rand<.3) return new GSDivide();
-			if(rand<.4) return new GSAdd();
-			if(rand<.5) return new GSSubtract();
+			if(rand<.08) return new GSLog();
+			if(rand<.24) return new GSMultiply();
+			if(rand<.40) return new GSDivide();
+			if(rand<.56) return new GSAdd();
+			if(rand<.72) return new GSSubtract();
+			if(rand<.8) return new GSSine();
+			if(rand<.9) return new GSCosine();
+			return new GSTangent();
 		}
 		//terminating
-		if(rand<.1) return new GSRandom();
-		if(rand<.2) return new GSNumAnchors();
-		if(rand<.3) return new GSNumStrands();
+		if(rand<.2) return new GSRandom();
+		if(rand<.4) return new GSNumAnchors();
+		if(rand<.6) return new GSNumStrands();
 		return new GSConstant();
 	}
 
