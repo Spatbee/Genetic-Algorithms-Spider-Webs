@@ -40,6 +40,12 @@ public class Web {
 		return new Strand(pieces.get(startIndex).getPoint(fixedStartRatio),pieces.get(endIndex).getPoint(fixedEndRatio));
 	}
 	
+	public int getFitness(int numAnchors, double webLength) {
+		WebDrawer wd = new WebDrawer(this);
+		wd.buildWeb(numAnchors, webLength);
+		return wd.getFitness();
+	}
+	
 	public static void main(String[] args) {
 		Web web = new Web();
 		System.out.println("first web:");

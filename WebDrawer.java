@@ -21,6 +21,11 @@ public class WebDrawer extends JPanel{
 	public WebDrawer(Web web) {
 		this.web = web;
 		this.setBorder(BorderFactory.createLineBorder(Color.BLUE));
+		webPieces = new ArrayList<WebComponent>();
+	}
+	
+	public void newWeb(Web web) {
+		this.web = web;
 	}
 	
 	public static int rangeFit(int size, double loc) {
@@ -72,12 +77,12 @@ public class WebDrawer extends JPanel{
 			webPieces.add(newStrand);
 			//if the strand added was length 0, kill the web
 			if(newStrand.getLength()==0) {
-				System.out.println("zero length strand");
+				//System.out.println("zero length strand");
 				break;
 			}
 			//if there are too many strands
 			if(webPieces.size()>1000) {
-				System.out.println("too many strands");
+				//System.out.println("too many strands");
 				break;
 			}
 			totalWebUsed += newStrand.getLength();
@@ -98,6 +103,26 @@ public class WebDrawer extends JPanel{
 		return web;
 	}
 	
+	public int getFitness() {
+		int score = 0;
+		for(int i = 0; i<800; i++) {
+			double r = 1.0/100*(i/200.0+1);//200 small, 200 medium, 200 big bugs
+			double x = Math.random()*2-1;
+			double y = Math.random()*2-1;
+			while(x*x+y*y>1) {//random point in the unit circle
+				x = Math.random()*2-1;
+				y = Math.random()*2-1;
+			}
+			for(WebComponent wc : webPieces) {
+				if(wc.intersects(x,y,r)) {
+					score++;
+					break;
+				}
+			}
+		}
+		return score;
+	}
+	
 	public static void main(String[] args) {
 		Web web = new Web();
 		WebDrawer webDrawer = new WebDrawer(web);
@@ -106,5 +131,6 @@ public class WebDrawer extends JPanel{
 		System.out.println();
 		webDrawer.buildWeb(4, 15);
 		System.out.println(webDrawer);
+		
 	}
 }

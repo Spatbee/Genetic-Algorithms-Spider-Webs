@@ -11,6 +11,7 @@ public class GSDivide implements GeneSegment {
 		this.gene2 = gene2;
 	}
 	public GeneSegment mutate() {
+		if(Math.random()<.1) return GeneCreator.newGene();
 		return new GSDivide(gene1.mutate(), gene2.mutate());
 	}
 

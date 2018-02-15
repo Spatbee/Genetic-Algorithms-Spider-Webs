@@ -45,4 +45,25 @@ public class Strand implements WebComponent {
 		g.drawLine(WebDrawer.rangeFit(width, start.getX()), WebDrawer.rangeFit(height, start.getY())
 				,WebDrawer.rangeFit(width, end.getX()), WebDrawer.rangeFit(height, end.getY()));
 	}
+	//modified from:
+	//https://stackoverflow.com/questions/13053061/circle-line-intersection-points
+	public boolean intersects(double x, double y, double r) {
+		double baX = end.getX() - start.getX();
+        double baY = end.getY() - start.getY();
+        double caX = x - start.getX();
+        double caY = y - start.getY();
+
+        double a = baX * baX + baY * baY;
+        double bBy2 = baX * caX + baY * caY;
+        double c = caX * caX + caY * caY - r * r;
+
+        double pBy2 = bBy2 / a;
+        double q = c / a;
+
+        double disc = pBy2 * pBy2 - q;
+        if (disc < 0) {
+            return false;
+        }
+        return true;
+	}
 }

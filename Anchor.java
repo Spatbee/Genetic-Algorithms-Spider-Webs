@@ -25,5 +25,8 @@ public class Anchor implements WebComponent {
 				, WebDrawer.rangeFit(height, point.getY())-height/45/2
 				, width/45, height/45);
 	}
+	public boolean intersects(double x, double y, double r) {
+		return false;//anchors to not intersect circles
+	}
 
 }

@@ -9,6 +9,7 @@ public class GSSine implements GeneSegment{
 	}
 	
 	public GeneSegment mutate() {
+		if(Math.random()<.1) return GeneCreator.newGene();
 		return new GSSine(inner.mutate());
 	}
 

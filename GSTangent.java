@@ -9,6 +9,7 @@ public class GSTangent implements GeneSegment{
 	}
 	
 	public GeneSegment mutate() {
+		if(Math.random()<.1) return GeneCreator.newGene();
 		return new GSTangent(inner.mutate());
 	}
 
