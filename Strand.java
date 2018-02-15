@@ -48,6 +48,7 @@ public class Strand implements WebComponent {
 	//modified from:
 	//https://stackoverflow.com/questions/13053061/circle-line-intersection-points
 	public boolean intersects(double x, double y, double r) {
+		if(this.getLength()<2*r) return false;//very short lines do not calculate correctly
 		double baX = end.getX() - start.getX();
         double baY = end.getY() - start.getY();
         double caX = x - start.getX();

@@ -12,12 +12,15 @@ import javax.swing.JTextField;
 
 public class WebViewer extends JFrame {
 	private final static String windowTitle = "Web Viewer";
-	private int numAnchors = 5;
-	private int webLength = 100;
-	
+	private int numAnchors, webLength;
 	public WebViewer(WebDrawer webDrawer) {
+		this(webDrawer, 5, 100);
+	}
+	public WebViewer(WebDrawer webDrawer, int numberAnchors, int lengthOfWeb) {
 		super(windowTitle);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.numAnchors = numberAnchors;
+		this.webLength = lengthOfWeb;
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setSize(600, 400);
 		this.setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		webDrawer.setPreferredSize(new Dimension(400,400));

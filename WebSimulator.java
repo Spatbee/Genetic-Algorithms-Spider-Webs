@@ -1,6 +1,8 @@
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
@@ -55,7 +57,7 @@ public class WebSimulator extends JFrame{
 		lastGeneration = new PriorityQueue<CompleteSim>(c);
 		thisGeneration = new PriorityQueue<CompleteSim>(c);
 		bestAllTimePQ = new PriorityQueue<CompleteSim>(c);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		
 		JPanel webQueues = new JPanel();
@@ -127,6 +129,22 @@ public class WebSimulator extends JFrame{
 		target.newWeb(cs.web);
 		target.buildWeb(cs.bestAnchor, webLength);
 		target.paintComponent(target.getGraphics());
+		for(MouseListener ml : target.getMouseListeners()) {
+			target.removeMouseListener(ml);
+		}
+		target.addMouseListener(new MouseListener() {
+			public void mouseClicked(MouseEvent arg0) {
+				WebViewer wv = new WebViewer(new WebDrawer(cs.web), cs.bestAnchor, webLength);
+			}
+			public void mouseEntered(MouseEvent arg0) {//do nothing
+			}
+			public void mouseExited(MouseEvent arg0) {//do nothing
+			}
+			public void mousePressed(MouseEvent arg0) {//do nothing
+			}
+			public void mouseReleased(MouseEvent arg0) {//do nothing
+			}
+		});
 	}
 	private CompleteSim runSim(Web web) {
 		int bestFitness = 0;
@@ -152,9 +170,9 @@ public class WebSimulator extends JFrame{
 				CompleteSim cs = runSim(new Web());
 				thisGeneration.add(cs);
 				populateRecent(cs);
-				//populateBestThisGen();
 				populateBestAllTime(cs);
 			}
+			populateBestThisGen();
 			
 		}
 		else {
@@ -172,15 +190,23 @@ public class WebSimulator extends JFrame{
 					CompleteSim child = runSim(parent.web.mutate());
 					thisGeneration.add(child);
 					populateRecent(child);
-					//populateBestThisGen();
 					populateBestAllTime(child);
 				}
 			}
+			populateBestThisGen();
 			
 		}
 		
 	}
-	
+	private void populateBestThisGen() {
+		ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
+		for(int i = 0; i < 4; i++) {
+			CompleteSim cs = thisGeneration.remove();
+			updateWebDrawer(thisGen[i],cs);
+			temp.add(cs);
+		}
+		for(int i = 0; i < 4; i++) thisGeneration.add(temp.remove(0));
+	}
 	private void populateBestLastGen() {
 		ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
 		for(int i = 0; i < 4; i++) {
