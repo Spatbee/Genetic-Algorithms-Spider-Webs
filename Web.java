@@ -42,8 +42,8 @@ public class Web {
 	
 	public int getFitness(int numAnchors, double webLength) {
 		WebDrawer wd = new WebDrawer(this);
-		wd.buildWeb(numAnchors, webLength);
-		return wd.getFitness();
+		return wd.buildWeb(numAnchors, webLength);
+		
 	}
 	
 	public static void main(String[] args) {

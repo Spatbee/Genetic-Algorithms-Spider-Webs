@@ -1,4 +1,4 @@
-import java.awt.Canvas;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -10,8 +10,8 @@ import javax.swing.JPanel;
 public class WebDrawer extends JPanel{
 	private Web web;
 	private ArrayList<WebComponent> webPieces;
-	private int width;
-	private int height;
+	//ArrayList<Circle> bugs = new ArrayList<Circle>();
+	
 	
 	
 	public WebDrawer() {
@@ -30,7 +30,7 @@ public class WebDrawer extends JPanel{
 	
 	public static int rangeFit(int size, double loc) {
 		int min = size/25;
-		int max = size*14/15;
+		int max = size*24/25;
 		loc = (loc+1)/2;
 		return (int) ((max-min)*loc+min);
 	}
@@ -47,6 +47,10 @@ public class WebDrawer extends JPanel{
 		for(WebComponent wc : webPieces) {
 			wc.drawSelf(g, this);
 		}
+		/*g.setColor(Color.RED);
+		for(Circle c : bugs) {
+			g.fillOval(c.x-c.r, c.y-c.r, 2*c.r, 2*c.r);
+		}*/
 	}
 	
 	/**
@@ -54,8 +58,10 @@ public class WebDrawer extends JPanel{
 	 * 
 	 * @param numAnchors The number of anchor points in this web.
 	 * @param webLength The maximum length of the strands in the web in total.
+	 * 
+	 * @return The fitness of this web.
 	 */
-	public void buildWeb(int numAnchors, double webLength) {
+	public int buildWeb(int numAnchors, double webLength) {
 		//clears old web
 		webPieces = new ArrayList<WebComponent>();
 		
@@ -90,6 +96,7 @@ public class WebDrawer extends JPanel{
 		}
 		//removes the last Strand added (it went over the length)
 		webPieces.remove(webPieces.size()-1);
+		return getFitness();
 	}
 	
 	public String toString() {
@@ -104,16 +111,19 @@ public class WebDrawer extends JPanel{
 		return web;
 	}
 	
-	public int getFitness() {
+	private int getFitness() {
+		//bugs = new ArrayList<Circle>();
 		int score = 0;
 		for(int i = 0; i<800; i++) {
-			double r = 1.0/100*(i/200.0+1);//200 small, 200 medium, 200 big bugs
+			int multiplier = i/200+2;
+			double r = 1.0/100*multiplier;//200 small, 200 medium, 200 big bugs
 			double x = Math.random()*2-1;
 			double y = Math.random()*2-1;
 			while(x*x+y*y>1) {//random point in the unit circle
 				x = Math.random()*2-1;
 				y = Math.random()*2-1;
 			}
+			//bugs.add(new Circle(x,y,r,this.getWidth(),this.getHeight()));
 			for(WebComponent wc : webPieces) {
 				if(wc.intersects(x,y,r)) {
 					score++;
@@ -134,4 +144,13 @@ public class WebDrawer extends JPanel{
 		System.out.println(webDrawer);
 		
 	}
+	private class Circle{
+		int x, y, r;
+		public Circle(double x, double y, double r, int width, int height) {
+			this.r = (int)(width*23/25*r);
+			this.x = (int)(WebDrawer.rangeFit(width, x)-r);
+			this.y = (int)(WebDrawer.rangeFit(height, y)-r);
+		}
+	}
 }
+

@@ -1,5 +1,4 @@
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -8,7 +7,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 public class WebViewer extends JFrame {
 	private final static String windowTitle = "Web Viewer";
@@ -24,7 +22,7 @@ public class WebViewer extends JFrame {
 		this.setSize(600, 400);
 		this.setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		webDrawer.setPreferredSize(new Dimension(400,400));
-		webDrawer.buildWeb(numAnchors, webLength);
+		int fit = webDrawer.buildWeb(numAnchors, webLength);
 		this.add(webDrawer);
 		
 		
@@ -35,7 +33,7 @@ public class WebViewer extends JFrame {
 		geneInfo.setEditable(false);
 		controlPanel.add(geneInfo);
 		
-		JTextArea fitnessInfo = new JTextArea("Fitness: "+webDrawer.getFitness()+"");
+		JTextArea fitnessInfo = new JTextArea("Fitness: "+fit+"");
 		fitnessInfo.setEditable(false);
 		controlPanel.add(fitnessInfo);
 		
@@ -51,9 +49,11 @@ public class WebViewer extends JFrame {
 				numAnchors++;
 				numAnchorsDisplay.setText("Number of anchors: "+numAnchors);
 				minusAnchor.setEnabled(true);
-				webDrawer.buildWeb(numAnchors, webLength);
+				
+				int fitness = webDrawer.buildWeb(numAnchors, webLength);
 				webDrawer.paintComponent(webDrawer.getGraphics());
-				fitnessInfo.setText("Fitness: "+webDrawer.getFitness()+"");
+				fitnessInfo.setText("Fitness: "+fitness+"");
+				
 			}
 		});
 		minusAnchor.addActionListener(new ActionListener() {
@@ -63,9 +63,11 @@ public class WebViewer extends JFrame {
 				if(numAnchors==3) {
 					minusAnchor.setEnabled(false);
 				}
-				webDrawer.buildWeb(numAnchors,  webLength);
+				
+				int fitness = webDrawer.buildWeb(numAnchors,  webLength);
 				webDrawer.paintComponent(webDrawer.getGraphics());
-				fitnessInfo.setText("Fitness: "+webDrawer.getFitness()+"");
+				fitnessInfo.setText("Fitness: "+fitness+"");
+				
 			}
 		});
 		
@@ -87,9 +89,9 @@ public class WebViewer extends JFrame {
 				webLength+=5;
 				webLengthDisplay.setText("Length of web (in radii): "+webLength);
 				minusWebLength.setEnabled(true);
-				webDrawer.buildWeb(numAnchors, webLength);
+				int fitness = webDrawer.buildWeb(numAnchors, webLength);
 				webDrawer.paintComponent(webDrawer.getGraphics());
-				fitnessInfo.setText("Fitness: "+webDrawer.getFitness()+"");
+				fitnessInfo.setText("Fitness: "+fitness+"");
 			}
 		});
 		minusWebLength.addActionListener(new ActionListener() {
@@ -99,9 +101,9 @@ public class WebViewer extends JFrame {
 				if(webLength<=5) {
 					minusWebLength.setEnabled(false);
 				}
-				webDrawer.buildWeb(numAnchors,  webLength);
+				int fitness = webDrawer.buildWeb(numAnchors,  webLength);
 				webDrawer.paintComponent(webDrawer.getGraphics());
-				fitnessInfo.setText("Fitness: "+webDrawer.getFitness()+"");
+				fitnessInfo.setText("Fitness: "+fitness+"");
 			}
 		});
 		

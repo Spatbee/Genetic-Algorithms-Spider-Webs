@@ -170,8 +170,9 @@ public class WebSimulator extends JFrame{
 				CompleteSim cs = runSim(new Web());
 				thisGeneration.add(cs);
 				populateRecent(cs);
-				populateBestAllTime(cs);
+				
 			}
+			populateBestAllTime();
 			populateBestThisGen();
 			
 		}
@@ -190,9 +191,10 @@ public class WebSimulator extends JFrame{
 					CompleteSim child = runSim(parent.web.mutate());
 					thisGeneration.add(child);
 					populateRecent(child);
-					populateBestAllTime(child);
+					
 				}
 			}
+			populateBestAllTime();
 			populateBestThisGen();
 			
 		}
@@ -217,8 +219,8 @@ public class WebSimulator extends JFrame{
 		for(int i = 0; i < 4; i++) lastGeneration.add(temp.remove(0));
 	}
 	
-	private void populateBestAllTime(CompleteSim cs) {
-		bestAllTimePQ.add(cs);
+	private void populateBestAllTime() {
+		bestAllTimePQ.addAll(thisGeneration);
 		ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
 		int size = bestAllTimePQ.size();
 		for(int i = 0; i<size; i++) {
