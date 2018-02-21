@@ -1,3 +1,4 @@
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,12 @@ public class WebSimulator extends JFrame{
 		}
 
 	};
+	private int generationNumber = 0;
+	private JTextField generationNumberLabel;
+	private volatile boolean continueGenerating = false;
+	/**
+	 * Creates a WebSimulator.
+	 */
 	public WebSimulator() {
 		super(windowTitle);
 		
@@ -110,21 +117,61 @@ public class WebSimulator extends JFrame{
 		this.add(webQueues);
 		
 		JPanel controls = new JPanel();
+		//controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
 		controls.setPreferredSize(new Dimension(300,previewSize*4+50));
+		controls.setMaximumSize(new Dimension(300,previewSize*4+50));
 		JButton stepOneGeneration = new JButton("Step one generation");
 		stepOneGeneration.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				runOneGeneration();
 			}
 		});
-		controls.add(stepOneGeneration);
+		JPanel wrapper1 = new JPanel();
+		wrapper1.add(stepOneGeneration);
+		controls.add(wrapper1);
+		
+		JButton startStop = new JButton("Start");
+		startStop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				continueGenerating = !continueGenerating;
+				Thread t = new Thread(new Runnable() {
+					public void run() {
+						playGenerations();
+					}
+				});
+				t.start();
+			}
+		});
+		JPanel wrapper4 = new JPanel();
+		wrapper4.add(startStop);
+		controls.add(wrapper4);
+		
+		generationNumberLabel = new JTextField("Generation Number: 0");
+		generationNumberLabel.setEditable(false);
+		generationNumberLabel.setPreferredSize(new Dimension(200,30));
+//		generationNumberLabel.setMaximumSize(new Dimension(300,50));
+		JPanel wrapper2 = new JPanel();
+		wrapper2.add(generationNumberLabel);
+		controls.add(wrapper2);
 		currentWeb.setPreferredSize(new Dimension(300,300));
-		controls.add(currentWeb);
+//		currentWeb.setMaximumSize(new Dimension(600,300));
+		JPanel wrapper3 = new JPanel();
+		wrapper3.add(currentWeb);
+		controls.add(wrapper3);
+		
+		
+		
 		this.add(controls);
 		
 		this.pack();
+		//this.revalidate();
 		this.setVisible(true);
 	}
+	/*
+	 * Updates the target WebDrawer to display a CompleteSim.
+	 * @param target The WebDrawer to be updated.
+	 * @param cs The CompleteSim to be put in the WebDrawer.
+	 */
 	private void updateWebDrawer(WebDrawer target, CompleteSim cs) {
 		target.newWeb(cs.web);
 		target.buildWeb(cs.bestAnchor, webLength);
@@ -146,6 +193,11 @@ public class WebSimulator extends JFrame{
 			}
 		});
 	}
+	/*
+	 * Runs a simulation on a web. 
+	 * @param web The web to be tested.
+	 * @return A CompleteSim with the total fitness and the best number of anchors recorded.
+	 */
 	private CompleteSim runSim(Web web) {
 		int bestFitness = 0;
 		int bestAnchor = 0;
@@ -162,7 +214,17 @@ public class WebSimulator extends JFrame{
 		updateWebDrawer(currentWeb, cs);
 		return cs;
 	}
-	
+	/*
+	 * Runs multiple gnerations of webs.
+	 */
+	private void playGenerations() {
+		while(continueGenerating) {
+			runOneGeneration();
+		}
+	}
+	/*
+	 *Runs a single generation of webs. 
+	 */
 	private void runOneGeneration() {
 		if(firstGen) {
 			firstGen = false;
@@ -198,33 +260,42 @@ public class WebSimulator extends JFrame{
 			populateBestThisGen();
 			
 		}
-		
+		generationNumber++;
+		generationNumberLabel.setText("Generation Number: "+generationNumber);
 	}
+	/*
+	 *Populates/updates the "best this generation" column. 
+	 */
 	private void populateBestThisGen() {
 		ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
 		for(int i = 0; i < 4; i++) {
-			CompleteSim cs = thisGeneration.remove();
+			CompleteSim cs = thisGeneration.remove().copy();
 			updateWebDrawer(thisGen[i],cs);
 			temp.add(cs);
 		}
 		for(int i = 0; i < 4; i++) thisGeneration.add(temp.remove(0));
 	}
+	/*
+	 *Populates/updates the "best last generation" column. 
+	 */
 	private void populateBestLastGen() {
 		ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
 		for(int i = 0; i < 4; i++) {
-			CompleteSim cs = lastGeneration.remove();
+			CompleteSim cs = lastGeneration.remove().copy();
 			updateWebDrawer(lastGen[i],cs);
 			temp.add(cs);
 		}
 		for(int i = 0; i < 4; i++) lastGeneration.add(temp.remove(0));
 	}
-	
+	/*
+	 *Populates/updates the "best all time" column. 
+	 */
 	private void populateBestAllTime() {
 		bestAllTimePQ.addAll(thisGeneration);
 		ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
 		int size = bestAllTimePQ.size();
 		for(int i = 0; i<size; i++) {
-			CompleteSim best = bestAllTimePQ.remove();
+			CompleteSim best = bestAllTimePQ.remove().copy();
 			if(i<4)updateWebDrawer(allTime[i],best);
 			temp.add(best);
 		}
@@ -232,19 +303,24 @@ public class WebSimulator extends JFrame{
 			if(temp.size()>0)bestAllTimePQ.add(temp.remove(0));
 		}
 	}
-	
+	/*
+	 *Populates/updates the "most recent" column.
+	 *@param cs The most recent CompleteSim. 
+	 */
 	private void populateRecent(CompleteSim cs) {
 		recentSims.add(0,cs);
 		for(int i = 0; i<4; i++) {
 			if(recentSims.size()>i) {
-				updateWebDrawer(recent[i],recentSims.get(i));
+				updateWebDrawer(recent[i],recentSims.get(i).copy());
 			}
 		}
 		if(recentSims.size()>4) {
 			recentSims.remove(4);
 		}
 	}
-	
+	/*
+	 * Holds a complete sim that has a web's total fitness across multiple anchors, it's best anchor, and the web.
+	 */
 	private class CompleteSim{
 		public Web web;
 		public int bestAnchor, totalFitness;
@@ -252,6 +328,10 @@ public class WebSimulator extends JFrame{
 			this.web = web;
 			this.bestAnchor = bestAnchor;
 			this.totalFitness = totalFitness;
+		}
+		
+		public CompleteSim copy() {
+			return new CompleteSim(web.copy(), bestAnchor, totalFitness);
 		}
 	}
 	

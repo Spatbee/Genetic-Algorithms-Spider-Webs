@@ -68,6 +68,13 @@ public class Web {
 		return wd.buildWeb(numAnchors, webLength);
 		
 	}
+	/**
+	 * Creates a copy of this Web;
+	 * @return The copy of this Web;
+	 */
+	public Web copy() {
+		return new Web(start.copy(), end.copy(), startRatio.copy(), endRatio.copy());
+	}
 	
 	public static void main(String[] args) {
 		Web web = new Web();
