@@ -2,11 +2,17 @@
 
 public class GSSubtract implements GeneSegment {
 	public GeneSegment gene1, gene2;
-	
+	/**
+	 * Create a new, random, GSSubtract.
+	 */
 	public GSSubtract() {
 		this(GeneCreator.newGene(), GeneCreator.newGene());
 	}
-	
+	/**
+	 * Create a new GSSubtract gene segment.
+	 * @param gene1 The gene to be subtracted from.
+	 * @param gene2 The gene to be subtracted.
+	 */
 	public GSSubtract(GeneSegment gene1, GeneSegment gene2) {
 		this.gene1 = gene1;
 		this.gene2 = gene2;

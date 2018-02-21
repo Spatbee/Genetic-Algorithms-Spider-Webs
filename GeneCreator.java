@@ -1,5 +1,9 @@
 
 public class GeneCreator {
+	/**
+	 * Gets a new, random gene.  Terminating genes are more likely.
+	 * @return A random GeneSegment extended object.
+	 */
 	public static GeneSegment newGene() {
 		double t = Math.random();
 		double rand = Math.random();

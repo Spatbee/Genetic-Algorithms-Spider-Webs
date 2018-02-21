@@ -2,10 +2,17 @@
 public class GSDivide implements GeneSegment {
 	public GeneSegment gene1, gene2;
 	
+	/**
+	 * Creates a new, random, GSDivide.
+	 */
 	public GSDivide() {
 		this(GeneCreator.newGene(), GeneCreator.newGene());
 	}
-	
+	/**
+	 * Creates a new GSDivide gene segment.
+	 * @param gene1 The gene to be divided from.
+	 * @param gene2 The gene to be divided with.
+	 */
 	public GSDivide(GeneSegment gene1, GeneSegment gene2) {
 		this.gene1 = gene1;
 		this.gene2 = gene2;

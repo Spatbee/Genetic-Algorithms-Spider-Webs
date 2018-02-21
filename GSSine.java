@@ -1,9 +1,16 @@
 
 public class GSSine implements GeneSegment{
 	private GeneSegment inner;
+	/**
+	 * Create a new, random, GSSine.
+	 */
 	public GSSine() {
 		this(GeneCreator.newGene());
 	}
+	/**
+	 * Create a new GSSine gene segment.
+	 * @param inner The gene on the inside of the sine.
+	 */
 	public GSSine(GeneSegment inner) {
 		this.inner = inner;
 	}

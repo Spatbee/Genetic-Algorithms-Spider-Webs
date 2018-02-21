@@ -3,10 +3,17 @@ public class GSLog implements GeneSegment{
 	private double base;
 	private GeneSegment inner;
 	
+	/**
+	 * Creates a new, random, GSLog.
+	 */
 	public GSLog() {
 		this(Math.random()*10+1,GeneCreator.newGene());
 	}
-	
+	/**
+	 * Creates a new GSLog gene segment.
+	 * @param base The base of the log function.
+	 * @param inner The inside of the log function.
+	 */
 	public GSLog(double base, GeneSegment inner) {
 		this.base = base;
 		this.inner = inner;

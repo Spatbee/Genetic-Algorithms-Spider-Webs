@@ -13,21 +13,35 @@ public class WebDrawer extends JPanel{
 	//ArrayList<Circle> bugs = new ArrayList<Circle>();
 	
 	
-	
+	/**
+	 * Creates a new, random, WebDrawer.
+	 */
 	public WebDrawer() {
 		this(new Web());
 	}
 	
+	/**
+	 * Creates a new WebDrawer.
+	 * @param web The Web that this WebDrawer will draw.
+	 */
 	public WebDrawer(Web web) {
 		this.web = web;
 		this.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 		webPieces = new ArrayList<WebComponent>();
 	}
-	
+	/**
+	 * Gives this WebDrawer a new Web.
+	 * @param web The new Web.
+	 */
 	public void newWeb(Web web) {
 		this.web = web;
 	}
-	
+	/**
+	 * Fits a double on the unit circle to an int inside this JPanel.
+	 * @param size The size of the desired range.  Either the width or height of this.
+	 * @param loc The coordinate in the unit circle.
+	 * @return The int relating to the coordinate in the unit circle, in this JPanel's dimensions, with a buffer size of 1/25 the size of this.
+	 */
 	public static int rangeFit(int size, double loc) {
 		int min = size/25;
 		int max = size*24/25;
@@ -106,11 +120,17 @@ public class WebDrawer extends JPanel{
 		}
 		return s;
 	}
-	
+	/**
+	 * Gets the web inside this.
+	 * @return The web inside this.
+	 */
 	public Web getWeb() {
 		return web;
 	}
-	
+	/**
+	 * Gets the fitness of the web inside this.  buildWeb() must be used first.  The fitness is on a scale of 0 to 800, with 800 being a perfect score.
+	 * @return The fitness of the web currently inside this.
+	 */
 	private int getFitness() {
 		//bugs = new ArrayList<Circle>();
 		int score = 0;

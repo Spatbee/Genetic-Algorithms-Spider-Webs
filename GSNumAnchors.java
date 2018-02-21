@@ -1,6 +1,8 @@
 
 public class GSNumAnchors implements GeneSegment{
-
+	/**
+	 * Creates a new GSNumAnchors.
+	 */
 	public GSNumAnchors() {
 		
 	}
@@ -12,7 +14,9 @@ public class GSNumAnchors implements GeneSegment{
 		return this.copy();
 	}
 
-
+	/**
+	 * @return The number of anchors in the web.
+	 */
 	public double evaluate(int numAnchors, int numStrands) {
 		return numAnchors;
 	}

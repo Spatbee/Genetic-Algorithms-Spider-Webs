@@ -5,11 +5,22 @@ import javax.swing.JPanel;
 
 public class Strand implements WebComponent {
 	private Point start, end;
-	
+	/**
+	 * Creates a strand going from one point to another.  These points are on the unit circle.
+	 * @param start The start point.
+	 * @param end The end point.
+	 */
 	public Strand(Point start, Point end) {
 		this.start = start;
 		this.end = end;
 	}
+	/**
+	 * Creates a strand going from one point to another.  These points are on the unit circle.
+	 * @param x1 The x coordinate of the start point.
+	 * @param y1 The y coordinate of the start point.
+	 * @param x2 The x coordinate of the end point.
+	 * @param y2 The y coordinate of the end point.
+	 */
 	public Strand(double x1, double y1, double x2, double y2) {
 		this(new Point(x1,y1), new Point(x2,y2));
 	}
@@ -28,7 +39,10 @@ public class Strand implements WebComponent {
 		double y3 = start.getY() + (end.getY()-start.getY())*ratio;
 		return new Point(x3,y3);
 	}
-	
+	/**
+	 * Gets the length of this Strand.
+	 * @return The length of this strand.
+	 */
 	public double getLength() {
 		//distance formula
 		return Math.sqrt(Math.pow(start.getX()-end.getX(),2)+Math.pow(start.getY()-end.getY(), 2));
@@ -37,7 +51,12 @@ public class Strand implements WebComponent {
 	public String toString() {
 		return String.format("Strand from "+start.toString()+" to "+end.toString());
 	}
-	
+	/**
+	 * Draws this strand on a JPanel.
+	 * 
+	 * @param g The graphics of the target JPanel.
+	 * @param canvas The canvas to draw on.
+	 */
 	public void drawSelf(Graphics g, JPanel canvas) {
 		int width = canvas.getWidth();
 		int height = canvas.getHeight();
@@ -46,6 +65,15 @@ public class Strand implements WebComponent {
 				,WebDrawer.rangeFit(width, end.getX()), WebDrawer.rangeFit(height, end.getY()));
 	}
 	
+	/**
+	 * Sees if this strand intersects with a circle.
+	 * 
+	 * @param x3 The x coordinate of the center of the circle.
+	 * @param y3 The y coordinate of the center of the circle.
+	 * @param r The radius of the circle.
+	 * 
+	 * @return true if there exists a point of intersection between the strand and the circle.  False otherwise. Also false if this strand is vertical, as it has an infinite slope.
+	 */
 	public boolean intersects(double x3, double y3, double r) {
 		//if(this.getLength()<2*r)return false;
 		double x1 = this.start.getX();
@@ -78,30 +106,6 @@ public class Strand implements WebComponent {
 		return false;
 	}
 	
-	//modified from:
-	//https://stackoverflow.com/questions/13053061/circle-line-intersection-points
-	/*
-	public boolean intersects(double x, double y, double r) {
-		if(this.getLength()<2*r) return false;//very short lines do not calculate correctly
-		double baX = end.getX() - start.getX();
-        double baY = end.getY() - start.getY();
-        double caX = x - start.getX();
-        double caY = y - start.getY();
-
-        double a = baX * baX + baY * baY;
-        double bBy2 = baX * caX + baY * caY;
-        double c = caX * caX + caY * caY - r * r;
-
-        double pBy2 = bBy2 / a;
-        double q = c / a;
-
-        double disc = pBy2 * pBy2 - q;
-        if (disc < 0) {
-            return false;
-        }
-        return true;
-	}
-	*/
 	public static void main(String[] args) {
 //		Strand s1 = new Strand(new Point(0.0,0.0), new Point(2.0,2.0));
 //		System.out.println(s1.intersects(1.0, 1.0, 0.5));

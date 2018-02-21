@@ -2,10 +2,17 @@
 public class GSMultiply implements GeneSegment {
 	public GeneSegment gene1, gene2;
 	
+	/**
+	 * Creates a new, random, GSMultiply.
+	 */
 	public GSMultiply() {
 		this(GeneCreator.newGene(), GeneCreator.newGene());
 	}
-	
+	/**
+	 * Creates a new GSMultiply gene segment.
+	 * @param gene1 The first gene to be multiplied.
+	 * @param gene2 The second gene to be multiplied.
+	 */
 	public GSMultiply(GeneSegment gene1, GeneSegment gene2) {
 		this.gene1 = gene1;
 		this.gene2 = gene2;

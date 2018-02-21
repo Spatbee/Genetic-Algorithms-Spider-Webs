@@ -1,9 +1,16 @@
 
 public class GSTangent implements GeneSegment{
 	private GeneSegment inner;
+	/**
+	 * Creates a new, random, GSTangent.
+	 */
 	public GSTangent() {
 		this(GeneCreator.newGene());
 	}
+	/**
+	 * Creates a new GSTangent gene segment.
+	 * @param inner The gene inside the tangent function.
+	 */
 	public GSTangent(GeneSegment inner) {
 		this.inner = inner;
 	}

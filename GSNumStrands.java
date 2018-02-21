@@ -1,5 +1,7 @@
 public class GSNumStrands implements GeneSegment{
-
+	/**
+	 * Creates a new GSNumStrands.
+	 */
 	public GSNumStrands() {
 		
 	}
@@ -11,7 +13,9 @@ public class GSNumStrands implements GeneSegment{
 		return this.copy();
 	}
 
-
+	/**
+	 * @return the number of strands in the web, currently.
+	 */
 	public double evaluate(int numAnchors, int numStrands) {
 		return numStrands;
 	}

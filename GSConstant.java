@@ -2,10 +2,17 @@
 public class GSConstant implements GeneSegment {
 	private double value;
 	
+	/**
+	 * Creates a new, random, GSConstant.
+	 */
 	public GSConstant() {
 		this.value =Math.random()*10-5;
 	}
 	
+	/**
+	 * Creates a new GSContstant gene segment.
+	 * @param value The value of the constant.
+	 */
 	public GSConstant(double value) {
 		this.value = value;
 	}
