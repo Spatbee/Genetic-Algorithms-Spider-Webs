@@ -20,7 +20,7 @@ public class WebSimulator extends JFrame{
 	private WebDrawer[] allTime, lastGen, thisGen, recent;
 	private final int previewSize = 180;
 	private boolean firstGen = true;
-	private int webLength = 100;
+	private int webLength = 180;
 	private WebDrawer currentWeb = new WebDrawer();
 	private ArrayList<CompleteSim> recentSims = new ArrayList<CompleteSim>();
 	private Comparator<CompleteSim> c = new Comparator<CompleteSim>() {
@@ -134,6 +134,13 @@ public class WebSimulator extends JFrame{
 		startStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				continueGenerating = !continueGenerating;
+				stepOneGeneration.setEnabled(!continueGenerating);
+				if(continueGenerating) {
+					startStop.setText("Stop");
+				}
+				else {
+					startStop.setText("Start");
+				}
 				Thread t = new Thread(new Runnable() {
 					public void run() {
 						playGenerations();
