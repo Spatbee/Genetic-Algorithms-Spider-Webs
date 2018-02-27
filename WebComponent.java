@@ -1,8 +1,9 @@
 import java.awt.Graphics;
+import java.io.Serializable;
 
 import javax.swing.JPanel;
 
-public interface WebComponent {
+public interface WebComponent extends Serializable{
 	/**
 	 * Gets a point along the stretch of this WebComponent.
 	 * @param ratio The ratio from the start point to the end point of this WebComponent (if applicable).

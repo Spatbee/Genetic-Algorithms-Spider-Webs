@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public interface GeneSegment {
+public interface GeneSegment extends Serializable{
 	/**
 	 * Mutates this gene
 	 * @return A GeneSegment that may or may not be mutated.  It may also be a new random gene.

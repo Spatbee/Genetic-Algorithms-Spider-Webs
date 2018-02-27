@@ -4,14 +4,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -21,19 +31,14 @@ public class WebSimulator extends JFrame{
 	private WebDrawer[] allTime, lastGen, thisGen, recent;
 	private final int previewSize = 180;
 	private boolean firstGen = true;
-	private int webLength = 180;
+	private int webLength = 85;
 	private WebDrawer currentWeb = new WebDrawer();
 	private ArrayList<CompleteSim> recentSims = new ArrayList<CompleteSim>();
-	private Comparator<CompleteSim> c = new Comparator<CompleteSim>() {
-
-		public int compare(CompleteSim o1, CompleteSim o2) {
-			return o2.totalFitness-o1.totalFitness;
-		}
-
-	};
+	private fitnessComparator c = new fitnessComparator();
 	private int generationNumber = 0;
 	private JTextField generationNumberText, webAmountText, minimumAnchorText, maximumAnchorText;
 	private volatile boolean continueGenerating = false;
+	private JButton save, load;
 	/**
 	 * Creates a WebSimulator.
 	 */
@@ -168,7 +173,7 @@ public class WebSimulator extends JFrame{
 		
 		JPanel wrapper5 = new JPanel();
 		JLabel webAmountLabel = new JLabel("Web amount: ");
-		webAmountText = new JTextField("100");
+		webAmountText = new JTextField(webLength+"");
 		webAmountText.setPreferredSize(new Dimension(60,20));
 		webAmountText.setHorizontalAlignment(JTextField.RIGHT);
 		wrapper5.add(webAmountLabel);
@@ -201,6 +206,41 @@ public class WebSimulator extends JFrame{
 		JPanel wrapper3 = new JPanel();
 		wrapper3.add(currentWeb);
 		controls.add(wrapper3);
+		
+		save = new JButton("Save");
+		save.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					save();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		JPanel wrapper8 = new JPanel();
+		wrapper8.add(save);
+		wrapper8.setPreferredSize(new Dimension(300,30));
+		controls.add(wrapper8);
+		
+		load = new JButton("Load");
+		
+		load.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					JFileChooser jfc = new JFileChooser(new File("saves"));
+					if(jfc.showDialog(load, "Choose") == JFileChooser.APPROVE_OPTION) {
+						String fileName = jfc.getSelectedFile().getPath();
+						load(fileName);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		JPanel wrapper9 = new JPanel();
+		wrapper9.add(load);
+		wrapper9.setPreferredSize(new Dimension(300,30));
+		controls.add(wrapper9);
 		
 
 		this.add(controls);
@@ -273,6 +313,7 @@ public class WebSimulator extends JFrame{
 	 */
 	private void runOneGeneration() {
 		setTextFieldsEditable(false);
+		setButtonsEnabled(false);
 		validateTextFields();
 		if(firstGen) {
 			firstGen = false;
@@ -311,45 +352,52 @@ public class WebSimulator extends JFrame{
 		generationNumber++;
 		generationNumberText.setText(""+generationNumber);
 		setTextFieldsEditable(true);
+		setButtonsEnabled(true);
 	}
 	/*
 	 *Populates/updates the "best this generation" column. 
 	 */
 	private void populateBestThisGen() {
-		ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
-		for(int i = 0; i < 4; i++) {
-			CompleteSim cs = thisGeneration.remove().copy();
-			updateWebDrawer(thisGen[i],cs);
-			temp.add(cs);
+		if(!thisGeneration.isEmpty()) {
+			ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
+			for(int i = 0; i < 4; i++) {
+				CompleteSim cs = thisGeneration.remove().copy();
+				updateWebDrawer(thisGen[i],cs);
+				temp.add(cs);
+			}
+			for(int i = 0; i < 4; i++) thisGeneration.add(temp.remove(0));
 		}
-		for(int i = 0; i < 4; i++) thisGeneration.add(temp.remove(0));
 	}
 	/*
 	 *Populates/updates the "best last generation" column. 
 	 */
 	private void populateBestLastGen() {
-		ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
-		for(int i = 0; i < 4; i++) {
-			CompleteSim cs = lastGeneration.remove().copy();
-			updateWebDrawer(lastGen[i],cs);
-			temp.add(cs);
+		if(!lastGeneration.isEmpty()) {
+			ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
+			for(int i = 0; i < 4; i++) {
+				CompleteSim cs = lastGeneration.remove().copy();
+				updateWebDrawer(lastGen[i],cs);
+				temp.add(cs);
+			}
+			for(int i = 0; i < 4; i++) lastGeneration.add(temp.remove(0));
 		}
-		for(int i = 0; i < 4; i++) lastGeneration.add(temp.remove(0));
 	}
 	/*
 	 *Populates/updates the "best all time" column. 
 	 */
 	private void populateBestAllTime() {
-		bestAllTimePQ.addAll(thisGeneration);
-		ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
-		int size = bestAllTimePQ.size();
-		for(int i = 0; i<size; i++) {
-			CompleteSim best = bestAllTimePQ.remove().copy();
-			if(i<4)updateWebDrawer(allTime[i],best);
-			temp.add(best);
-		}
-		for(int i = 0; i<4; i++) {
-			if(temp.size()>0)bestAllTimePQ.add(temp.remove(0));
+		if(!thisGeneration.isEmpty()) {
+			bestAllTimePQ.addAll(thisGeneration);
+			ArrayList<CompleteSim> temp = new ArrayList<CompleteSim>();
+			int size = bestAllTimePQ.size();
+			for(int i = 0; i<size; i++) {
+				CompleteSim best = bestAllTimePQ.remove().copy();
+				if(i<4)updateWebDrawer(allTime[i],best);
+				temp.add(best);
+			}
+			for(int i = 0; i<4; i++) {
+				if(temp.size()>0)bestAllTimePQ.add(temp.remove(0));
+			}
 		}
 	}
 	/*
@@ -368,9 +416,17 @@ public class WebSimulator extends JFrame{
 		}
 	}
 	/*
+	 * Comparator for fitness
+	 */
+	private class fitnessComparator implements Comparator<CompleteSim>, Serializable{
+		public int compare(CompleteSim o1, CompleteSim o2) {
+			return o2.totalFitness-o1.totalFitness;
+		}
+	}
+	/*
 	 * Holds a complete sim that has a web's total fitness across multiple anchors, it's best anchor, and the web.
 	 */
-	private class CompleteSim{
+	private class CompleteSim implements Serializable{
 		public Web web;
 		public int bestAnchor, totalFitness;
 		public CompleteSim(Web web, int bestAnchor, int totalFitness) {
@@ -433,6 +489,59 @@ public class WebSimulator extends JFrame{
 		minimumAnchorText.setEditable(editable);
 		maximumAnchorText.setEditable(editable);
 	}
+	/*
+	 * Makes the relevant buttons enabled or not
+	 */
+	private void setButtonsEnabled(boolean enabled) {
+		save.setEnabled(enabled);
+		load.setEnabled(enabled);
+	}
+	
+	/**
+	 * Fills this WebSimulator with the data from the given file path.
+	 * @param filePath The complete file path to the data.
+	 */
+	public void load(String filePath) throws IOException, ClassNotFoundException, FileNotFoundException {
+		System.out.println(filePath);
+		System.out.println(new File(filePath).exists());
+		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(filePath)));
+		this.lastGeneration = (PriorityQueue<CompleteSim>)ois.readObject();
+		this.thisGeneration = (PriorityQueue<CompleteSim>)ois.readObject();
+		this.bestAllTimePQ = (PriorityQueue<CompleteSim>)ois.readObject();
+		generationNumberText.setText(""+(int)ois.readObject());
+		webAmountText.setText((String)ois.readObject());
+		minimumAnchorText.setText((String)ois.readObject());
+		maximumAnchorText.setText((String)ois.readObject());
+		populateBestAllTime();
+		populateBestThisGen();
+		populateBestLastGen();
+	}
+	
+	/**
+	 * Puts the data from this simulation to the given file path.
+	 */
+	public void save() throws IOException{
+		File saveDir = new File("saves");
+		if(!saveDir.exists()) {
+			saveDir.mkdir();
+		}
+		String fileName = (String) JOptionPane.showInputDialog(
+				this,
+				"Type a name for your simulation", 
+				"Save",
+				JOptionPane.QUESTION_MESSAGE);
+		if(fileName!=null) {
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("saves\\"+fileName+".sim")));
+			oos.writeObject(lastGeneration);
+			oos.writeObject(thisGeneration);
+			oos.writeObject(bestAllTimePQ);
+			oos.writeObject(generationNumber);
+			oos.writeObject(webAmountText.getText());
+			oos.writeObject(minimumAnchorText.getText());
+			oos.writeObject(maximumAnchorText.getText());
+			}
+	}
+		
 	
 	public static void main(String[] args) {
 		WebSimulator webSim = new WebSimulator();

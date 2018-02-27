@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Web {
+public class Web implements Serializable{
 	private GeneSegment start, end, startRatio, endRatio;
 	/**
 	 * Creates a new, random, Web.
