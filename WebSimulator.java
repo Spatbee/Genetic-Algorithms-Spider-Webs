@@ -11,6 +11,7 @@ import java.util.PriorityQueue;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -31,7 +32,7 @@ public class WebSimulator extends JFrame{
 
 	};
 	private int generationNumber = 0;
-	private JTextField generationNumberLabel;
+	private JTextField generationNumberText, webAmountText, minimumAnchorText, maximumAnchorText;
 	private volatile boolean continueGenerating = false;
 	/**
 	 * Creates a WebSimulator.
@@ -120,7 +121,7 @@ public class WebSimulator extends JFrame{
 		//controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
 		controls.setPreferredSize(new Dimension(300,previewSize*4+50));
 		controls.setMaximumSize(new Dimension(300,previewSize*4+50));
-		JButton stepOneGeneration = new JButton("Step one generation");
+		final JButton stepOneGeneration = new JButton("Step one generation");
 		stepOneGeneration.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				runOneGeneration();
@@ -130,7 +131,7 @@ public class WebSimulator extends JFrame{
 		wrapper1.add(stepOneGeneration);
 		controls.add(wrapper1);
 		
-		JButton startStop = new JButton("Start");
+		final JButton startStop = new JButton("Start");
 		startStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				continueGenerating = !continueGenerating;
@@ -153,21 +154,55 @@ public class WebSimulator extends JFrame{
 		wrapper4.add(startStop);
 		controls.add(wrapper4);
 		
-		generationNumberLabel = new JTextField("Generation Number: 0");
-		generationNumberLabel.setEditable(false);
-		generationNumberLabel.setPreferredSize(new Dimension(200,30));
+		JLabel generationLabel = new JLabel("Generation number: ");
+		generationNumberText = new JTextField("0");
+		generationNumberText.setPreferredSize(new Dimension(45,20));
+		generationNumberText.setHorizontalAlignment(JTextField.RIGHT);
+		generationNumberText.setEditable(false);
+		//generationNumberText.setPreferredSize(new Dimension(200,30));
 //		generationNumberLabel.setMaximumSize(new Dimension(300,50));
 		JPanel wrapper2 = new JPanel();
-		wrapper2.add(generationNumberLabel);
+		wrapper2.add(generationLabel);
+		wrapper2.add(generationNumberText);
 		controls.add(wrapper2);
+		
+		JPanel wrapper5 = new JPanel();
+		JLabel webAmountLabel = new JLabel("Web amount: ");
+		webAmountText = new JTextField("100");
+		webAmountText.setPreferredSize(new Dimension(60,20));
+		webAmountText.setHorizontalAlignment(JTextField.RIGHT);
+		wrapper5.add(webAmountLabel);
+		wrapper5.add(webAmountText);
+		wrapper5.setPreferredSize(new Dimension(300,30));
+		controls.add(wrapper5);
+		
+		JPanel wrapper6 = new JPanel();
+		JLabel minimumAnchorLabel = new JLabel("Minimum number of anchors: ");
+		minimumAnchorText = new JTextField("4");
+		minimumAnchorText.setPreferredSize(new Dimension(60,20));
+		minimumAnchorText.setHorizontalAlignment(JTextField.RIGHT);
+		wrapper6.add(minimumAnchorLabel);
+		wrapper6.add(minimumAnchorText);
+		wrapper6.setPreferredSize(new Dimension(300,30));
+		controls.add(wrapper6);
+		
+		JPanel wrapper7 = new JPanel();
+		JLabel maximumAnchorLabel = new JLabel("Maximum number of anchors: ");
+		maximumAnchorText = new JTextField("8");
+		maximumAnchorText.setPreferredSize(new Dimension(60,20));
+		maximumAnchorText.setHorizontalAlignment(JTextField.RIGHT);
+		wrapper7.add(maximumAnchorLabel);
+		wrapper7.add(maximumAnchorText);
+		wrapper7.setPreferredSize(new Dimension(300,30));
+		controls.add(wrapper7);
+		
 		currentWeb.setPreferredSize(new Dimension(300,300));
 //		currentWeb.setMaximumSize(new Dimension(600,300));
 		JPanel wrapper3 = new JPanel();
 		wrapper3.add(currentWeb);
 		controls.add(wrapper3);
 		
-		
-		
+
 		this.add(controls);
 		
 		this.pack();
@@ -179,16 +214,17 @@ public class WebSimulator extends JFrame{
 	 * @param target The WebDrawer to be updated.
 	 * @param cs The CompleteSim to be put in the WebDrawer.
 	 */
-	private void updateWebDrawer(WebDrawer target, CompleteSim cs) {
+	private void updateWebDrawer(WebDrawer target, final CompleteSim cs) {
+		final int parsedWebLength = Integer.parseInt(webAmountText.getText());
 		target.newWeb(cs.web);
-		target.buildWeb(cs.bestAnchor, webLength);
+		target.buildWeb(cs.bestAnchor, parsedWebLength);
 		target.paintComponent(target.getGraphics());
 		for(MouseListener ml : target.getMouseListeners()) {
 			target.removeMouseListener(ml);
 		}
 		target.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent arg0) {
-				WebViewer wv = new WebViewer(new WebDrawer(cs.web), cs.bestAnchor, webLength);
+				WebViewer wv = new WebViewer(new WebDrawer(cs.web), cs.bestAnchor, parsedWebLength);
 			}
 			public void mouseEntered(MouseEvent arg0) {//do nothing
 			}
@@ -209,8 +245,11 @@ public class WebSimulator extends JFrame{
 		int bestFitness = 0;
 		int bestAnchor = 0;
 		int totalFitness = 0;
-		for(int i = 4;i<9;i++) {
-			int fitness = web.getFitness(i, webLength);
+		int parsedWebLength = Integer.parseInt(webAmountText.getText());
+		int min = Integer.parseInt(minimumAnchorText.getText());
+		int max = Integer.parseInt(maximumAnchorText.getText());
+		for(int i = min;i<=max;i++) {
+			int fitness = web.getFitness(i, parsedWebLength);
 			totalFitness+=fitness;
 			if(fitness>=bestFitness) {
 				bestFitness= fitness;
@@ -233,6 +272,8 @@ public class WebSimulator extends JFrame{
 	 *Runs a single generation of webs. 
 	 */
 	private void runOneGeneration() {
+		setTextFieldsEditable(false);
+		validateTextFields();
 		if(firstGen) {
 			firstGen = false;
 			for(int i = 0; i<38; i++) {
@@ -268,7 +309,8 @@ public class WebSimulator extends JFrame{
 			
 		}
 		generationNumber++;
-		generationNumberLabel.setText("Generation Number: "+generationNumber);
+		generationNumberText.setText(""+generationNumber);
+		setTextFieldsEditable(true);
 	}
 	/*
 	 *Populates/updates the "best this generation" column. 
@@ -340,6 +382,56 @@ public class WebSimulator extends JFrame{
 		public CompleteSim copy() {
 			return new CompleteSim(web.copy(), bestAnchor, totalFitness);
 		}
+	}
+	/*
+	 * Makes sure all the text fields are parseable ints within expected operating range.
+	 */
+	private void validateTextFields() {
+		try {
+			int x = Integer.parseInt(webAmountText.getText());
+			if(x<5) {
+				webAmountText.setText("5");
+			}
+			else if(x>1000) {
+				webAmountText.setText("1000");
+			}
+		}
+		catch(Exception e) {
+			webAmountText.setText(webLength+"");
+		}
+		try {
+			int x = Integer.parseInt(minimumAnchorText.getText());
+			if(x<3) {
+				minimumAnchorText.setText("3");
+			}
+			else if(x>100) {
+				minimumAnchorText.setText("100");
+			}
+		}
+		catch(Exception e) {
+			minimumAnchorText.setText(4+"");
+		}
+		try {
+			int x = Integer.parseInt(maximumAnchorText.getText());
+			if(x<3||x<Integer.parseInt(minimumAnchorText.getText())) {
+				maximumAnchorText.setText(minimumAnchorText.getText());
+			}
+			else if(x>100) {
+				maximumAnchorText.setText("100");
+			}
+		}
+		catch(Exception e) {
+			maximumAnchorText.setText(""+Math.max(8, Integer.parseInt(maximumAnchorText.getText())));
+		}
+	}
+	
+	/*
+	 * Makes the relevant text fields either editable or not.
+	 */
+	private void setTextFieldsEditable(boolean editable) {
+		webAmountText.setEditable(editable);
+		minimumAnchorText.setEditable(editable);
+		maximumAnchorText.setEditable(editable);
 	}
 	
 	public static void main(String[] args) {

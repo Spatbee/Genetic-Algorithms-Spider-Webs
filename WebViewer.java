@@ -14,7 +14,7 @@ public class WebViewer extends JFrame {
 	public WebViewer(WebDrawer webDrawer) {
 		this(webDrawer, 5, 100);
 	}
-	public WebViewer(WebDrawer webDrawer, int numberAnchors, int lengthOfWeb) {
+	public WebViewer(final WebDrawer webDrawer, int numberAnchors, int lengthOfWeb) {
 		super(windowTitle);
 		this.numAnchors = numberAnchors;
 		this.webLength = lengthOfWeb;
@@ -33,17 +33,17 @@ public class WebViewer extends JFrame {
 		geneInfo.setEditable(false);
 		controlPanel.add(geneInfo);
 		
-		JTextArea fitnessInfo = new JTextArea("Fitness: "+fit+"");
+		final JTextArea fitnessInfo = new JTextArea("Fitness: "+fit+"");
 		fitnessInfo.setEditable(false);
 		controlPanel.add(fitnessInfo);
 		
 		JPanel anchorInfo = new JPanel();
 		//anchorInfo.setLayout(new BoxLayout(anchorInfo, BoxLayout.X_AXIS));
-		JTextArea numAnchorsDisplay = new JTextArea("Number of anchors: "+numAnchors);
+		final JTextArea numAnchorsDisplay = new JTextArea("Number of anchors: "+numAnchors);
 		numAnchorsDisplay.setEditable(false);
 		numAnchorsDisplay.setSize(numAnchorsDisplay.getPreferredSize());
 		JButton plusAnchor = new JButton("+");
-		JButton minusAnchor = new JButton("-");
+		final JButton minusAnchor = new JButton("-");
 		plusAnchor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				numAnchors++;
@@ -79,11 +79,11 @@ public class WebViewer extends JFrame {
 		
 		JPanel webLengthInfo = new JPanel();
 		//webLengthInfo.setLayout(new BoxLayout(webLengthInfo, BoxLayout.X_AXIS));
-		JTextArea webLengthDisplay = new JTextArea("Length of web (in radii): "+webLength);
+		final JTextArea webLengthDisplay = new JTextArea("Length of web (in radii): "+webLength);
 		webLengthDisplay.setEditable(false);
 		webLengthDisplay.setSize(numAnchorsDisplay.getPreferredSize());
 		JButton plusWebLength = new JButton("+");
-		JButton minusWebLength = new JButton("-");
+		final JButton minusWebLength = new JButton("-");
 		plusWebLength.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				webLength+=5;

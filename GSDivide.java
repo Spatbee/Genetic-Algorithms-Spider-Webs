@@ -22,7 +22,6 @@ public class GSDivide implements GeneSegment {
 		return new GSDivide(gene1.mutate(), gene2.mutate());
 	}
 
-	@Override
 	public double evaluate(int numAnchors, int numStrands) {
 		try {
 			return gene1.evaluate(numAnchors, numStrands)/gene2.evaluate(numAnchors, numStrands);
@@ -32,7 +31,6 @@ public class GSDivide implements GeneSegment {
 		}
 	}
 
-	@Override
 	public GeneSegment copy() {
 		return new GSDivide(gene1.copy(), gene2.copy());
 	}
