@@ -34,9 +34,9 @@ public class WebSimulator extends JFrame{
 	private int webLength = 85;
 	private WebDrawer currentWeb = new WebDrawer();
 	private ArrayList<CompleteSim> recentSims = new ArrayList<CompleteSim>();
-	private fitnessComparator c = new fitnessComparator();
+	private FitnessComparator c = new FitnessComparator();
 	private int generationNumber = 0;
-	private JTextField generationNumberText, webAmountText, minimumAnchorText, maximumAnchorText;
+	private transient JTextField generationNumberText, webAmountText, minimumAnchorText, maximumAnchorText;
 	private volatile boolean continueGenerating = false;
 	private JButton save, load;
 	/**
@@ -415,30 +415,8 @@ public class WebSimulator extends JFrame{
 			recentSims.remove(4);
 		}
 	}
-	/*
-	 * Comparator for fitness
-	 */
-	private class fitnessComparator implements Comparator<CompleteSim>, Serializable{
-		public int compare(CompleteSim o1, CompleteSim o2) {
-			return o2.totalFitness-o1.totalFitness;
-		}
-	}
-	/*
-	 * Holds a complete sim that has a web's total fitness across multiple anchors, it's best anchor, and the web.
-	 */
-	private class CompleteSim implements Serializable{
-		public Web web;
-		public int bestAnchor, totalFitness;
-		public CompleteSim(Web web, int bestAnchor, int totalFitness) {
-			this.web = web;
-			this.bestAnchor = bestAnchor;
-			this.totalFitness = totalFitness;
-		}
-		
-		public CompleteSim copy() {
-			return new CompleteSim(web.copy(), bestAnchor, totalFitness);
-		}
-	}
+
+	
 	/*
 	 * Makes sure all the text fields are parseable ints within expected operating range.
 	 */
@@ -502,16 +480,28 @@ public class WebSimulator extends JFrame{
 	 * @param filePath The complete file path to the data.
 	 */
 	public void load(String filePath) throws IOException, ClassNotFoundException, FileNotFoundException {
-		System.out.println(filePath);
-		System.out.println(new File(filePath).exists());
+		//System.out.println(filePath);
+		//System.out.println(new File(filePath).exists());
 		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(filePath)));
-		this.lastGeneration = (PriorityQueue<CompleteSim>)ois.readObject();
-		this.thisGeneration = (PriorityQueue<CompleteSim>)ois.readObject();
-		this.bestAllTimePQ = (PriorityQueue<CompleteSim>)ois.readObject();
-		generationNumberText.setText(""+(int)ois.readObject());
+		lastGeneration = (PriorityQueue<CompleteSim>) ois.readObject();
+		thisGeneration = (PriorityQueue<CompleteSim>) ois.readObject();
+		bestAllTimePQ = (PriorityQueue<CompleteSim>) ois.readObject();
+		/*
+		for(int i = 0; i<lastGenerationTemp.length; i++) {
+			lastGeneration.add(lastGenerationTemp[i]);
+		}
+		for(int i = 0; i<thisGenerationTemp.length; i++) {
+			thisGeneration.add(thisGenerationTemp[i]);
+		}
+		for(int i = 0; i<bestAllTimePQTemp.length; i++) {
+			bestAllTimePQ.add(bestAllTimePQTemp[i]);
+		}*/
+		generationNumber = (int)ois.readObject();
+		generationNumberText.setText(""+generationNumber);
 		webAmountText.setText((String)ois.readObject());
 		minimumAnchorText.setText((String)ois.readObject());
 		maximumAnchorText.setText((String)ois.readObject());
+		firstGen=(boolean)(ois.readObject());
 		populateBestAllTime();
 		populateBestThisGen();
 		populateBestLastGen();
@@ -532,6 +522,29 @@ public class WebSimulator extends JFrame{
 				JOptionPane.QUESTION_MESSAGE);
 		if(fileName!=null) {
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("saves\\"+fileName+".sim")));
+			//System.out.println(lastGeneration);
+			/*
+			CompleteSim[] lastGenerationTemp = new CompleteSim[lastGeneration.size()];
+			for(int i = 0; i< lastGenerationTemp.length; i++) {
+				lastGenerationTemp[i] = lastGeneration.remove();
+			}
+			for(int i = 0; i<lastGenerationTemp.length; i++) {
+				lastGeneration.add(lastGenerationTemp[i]);
+			}
+			CompleteSim[] thisGenerationTemp = new CompleteSim[thisGeneration.size()];
+			for(int i = 0; i< thisGenerationTemp.length; i++) {
+				thisGenerationTemp[i] = thisGeneration.remove();
+			}
+			for(int i = 0; i<lastGenerationTemp.length; i++) {
+				thisGeneration.add(lastGenerationTemp[i]);
+			}
+			CompleteSim[] bestAllTimePQTemp = new CompleteSim[bestAllTimePQ.size()];
+			for(int i = 0; i< bestAllTimePQTemp.length; i++) {
+				bestAllTimePQTemp[i] = bestAllTimePQ.remove();
+			}
+			for(int i = 0; i<bestAllTimePQTemp.length; i++) {
+				bestAllTimePQ.add(bestAllTimePQTemp[i]);
+			}*/
 			oos.writeObject(lastGeneration);
 			oos.writeObject(thisGeneration);
 			oos.writeObject(bestAllTimePQ);
@@ -539,6 +552,7 @@ public class WebSimulator extends JFrame{
 			oos.writeObject(webAmountText.getText());
 			oos.writeObject(minimumAnchorText.getText());
 			oos.writeObject(maximumAnchorText.getText());
+			oos.writeObject(firstGen);
 			}
 	}
 		
