@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class WebSimulator extends JFrame{
 	private PriorityQueue<CompleteSim> lastGeneration, thisGeneration, bestAllTimePQ;
@@ -228,6 +229,8 @@ public class WebSimulator extends JFrame{
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					JFileChooser jfc = new JFileChooser(new File("saves"));
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("Simulations", "sim");
+					jfc.setFileFilter(filter);
 					if(jfc.showDialog(load, "Choose") == JFileChooser.APPROVE_OPTION) {
 						String fileName = jfc.getSelectedFile().getPath();
 						load(fileName);
@@ -486,16 +489,6 @@ public class WebSimulator extends JFrame{
 		lastGeneration = (PriorityQueue<CompleteSim>) ois.readObject();
 		thisGeneration = (PriorityQueue<CompleteSim>) ois.readObject();
 		bestAllTimePQ = (PriorityQueue<CompleteSim>) ois.readObject();
-		/*
-		for(int i = 0; i<lastGenerationTemp.length; i++) {
-			lastGeneration.add(lastGenerationTemp[i]);
-		}
-		for(int i = 0; i<thisGenerationTemp.length; i++) {
-			thisGeneration.add(thisGenerationTemp[i]);
-		}
-		for(int i = 0; i<bestAllTimePQTemp.length; i++) {
-			bestAllTimePQ.add(bestAllTimePQTemp[i]);
-		}*/
 		generationNumber = (int)ois.readObject();
 		generationNumberText.setText(""+generationNumber);
 		webAmountText.setText((String)ois.readObject());
@@ -508,7 +501,8 @@ public class WebSimulator extends JFrame{
 	}
 	
 	/**
-	 * Puts the data from this simulation to the given file path.
+	 * Puts the data from this simulation to the given file, with '.sim' appended
+	 * @throws IOException.
 	 */
 	public void save() throws IOException{
 		File saveDir = new File("saves");
@@ -522,29 +516,6 @@ public class WebSimulator extends JFrame{
 				JOptionPane.QUESTION_MESSAGE);
 		if(fileName!=null) {
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("saves\\"+fileName+".sim")));
-			//System.out.println(lastGeneration);
-			/*
-			CompleteSim[] lastGenerationTemp = new CompleteSim[lastGeneration.size()];
-			for(int i = 0; i< lastGenerationTemp.length; i++) {
-				lastGenerationTemp[i] = lastGeneration.remove();
-			}
-			for(int i = 0; i<lastGenerationTemp.length; i++) {
-				lastGeneration.add(lastGenerationTemp[i]);
-			}
-			CompleteSim[] thisGenerationTemp = new CompleteSim[thisGeneration.size()];
-			for(int i = 0; i< thisGenerationTemp.length; i++) {
-				thisGenerationTemp[i] = thisGeneration.remove();
-			}
-			for(int i = 0; i<lastGenerationTemp.length; i++) {
-				thisGeneration.add(lastGenerationTemp[i]);
-			}
-			CompleteSim[] bestAllTimePQTemp = new CompleteSim[bestAllTimePQ.size()];
-			for(int i = 0; i< bestAllTimePQTemp.length; i++) {
-				bestAllTimePQTemp[i] = bestAllTimePQ.remove();
-			}
-			for(int i = 0; i<bestAllTimePQTemp.length; i++) {
-				bestAllTimePQ.add(bestAllTimePQTemp[i]);
-			}*/
 			oos.writeObject(lastGeneration);
 			oos.writeObject(thisGeneration);
 			oos.writeObject(bestAllTimePQ);

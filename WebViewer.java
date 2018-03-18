@@ -1,21 +1,34 @@
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.PriorityQueue;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class WebViewer extends JFrame {
 	private final static String windowTitle = "Web Viewer";
 	private int numAnchors, webLength;
+	private Web web;
 	public WebViewer(WebDrawer webDrawer) {
 		this(webDrawer, 5, 100);
 	}
 	public WebViewer(final WebDrawer webDrawer, int numberAnchors, int lengthOfWeb) {
 		super(windowTitle);
+		this.web = webDrawer.getWeb();
 		this.numAnchors = numberAnchors;
 		this.webLength = lengthOfWeb;
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -114,15 +127,77 @@ public class WebViewer extends JFrame {
 		controlPanel.add(webLengthInfo);
 		
 		JButton save = new JButton("Save");
-		//TODO add save functionality
+		save.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					save();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		controlPanel.add(save);
+		
+		JButton load = new JButton("Load");
+		load.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					JFileChooser jfc = new JFileChooser(new File("saves"));
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("Webs", "web");
+					jfc.setFileFilter(filter);
+					if(jfc.showDialog(load, "Choose") == JFileChooser.APPROVE_OPTION) {
+						String fileName = jfc.getSelectedFile().getPath();
+						load(fileName);
+					}
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+			
+		});
+		controlPanel.add(load);
 		
 		this.add(controlPanel);
 		
 		this.pack();
 		this.setVisible(true);
 	}
+	/**
+	 * Saves a file with this web in it with the prompted name with '.web' appended.
+	 * @throws IOException
+	 */
+	public void save() throws IOException {
+		File saveDir = new File("saves");
+		if(!saveDir.exists()) {
+			saveDir.mkdir();
+		}
+		String fileName = (String) JOptionPane.showInputDialog(
+				this,
+				"Type a name for your web", 
+				"Save",
+				JOptionPane.QUESTION_MESSAGE);
+		if(fileName!=null) {
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("saves\\"+fileName+".web")));
+			oos.writeObject(web);
+			oos.writeObject(numAnchors);
+			oos.writeObject(webLength);
+			
+			}
+	}
 	
+	/**
+	 * Updates this webViewer to display the selected web.
+	 * @param filePath the complete filepath to the data.
+	 */
+	public void load(String filePath) throws IOException, ClassNotFoundException, FileNotFoundException {
+
+		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(filePath)));
+		this.web = (Web) ois.readObject();
+		this.numAnchors = (int) ois.readObject();
+		this.webLength = (int) ois.readObject();
+		new WebViewer(new WebDrawer(web), numAnchors, webLength);
+		this.dispose();
+	}
 	
 	public static void main(String[] args) {
 		WebViewer webViewer = new WebViewer(new WebDrawer());
