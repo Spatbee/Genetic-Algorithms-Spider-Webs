@@ -73,6 +73,7 @@ public class WebSimulator extends JFrame{
 		bestAllTimePQ = new PriorityQueue<CompleteSim>(c);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
+		this.setResizable(false);
 		
 		JPanel webQueues = new JPanel();
 		webQueues.setLayout(new BoxLayout(webQueues, BoxLayout.X_AXIS));
@@ -121,6 +122,7 @@ public class WebSimulator extends JFrame{
 		webQueues.add(thisGenDisplay);
 		webQueues.add(recentDisplay);
 		webQueues.setMaximumSize(new Dimension(previewSize*4,previewSize*4+50));
+		webQueues.setMinimumSize(new Dimension(previewSize*4,previewSize*4+50));
 		this.add(webQueues);
 		
 		JPanel controls = new JPanel();
@@ -285,21 +287,11 @@ public class WebSimulator extends JFrame{
 	 * @return A CompleteSim with the total fitness and the best number of anchors recorded.
 	 */
 	private CompleteSim runSim(Web web) {
-		int bestFitness = 0;
-		int bestAnchor = 0;
-		int totalFitness = 0;
+		
 		int parsedWebLength = Integer.parseInt(webAmountText.getText());
 		int min = Integer.parseInt(minimumAnchorText.getText());
 		int max = Integer.parseInt(maximumAnchorText.getText());
-		for(int i = min;i<=max;i++) {
-			int fitness = web.getFitness(i, parsedWebLength);
-			totalFitness+=fitness;
-			if(fitness>=bestFitness) {
-				bestFitness= fitness;
-				bestAnchor = i;
-			}
-		}
-		CompleteSim cs = new CompleteSim(web, bestAnchor, totalFitness);
+		CompleteSim cs = CompleteSim.getSim(web, parsedWebLength, min, max);
 		updateWebDrawer(currentWeb, cs);
 		return cs;
 	}

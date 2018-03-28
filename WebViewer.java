@@ -23,6 +23,9 @@ public class WebViewer extends JFrame {
 	private final static String windowTitle = "Web Viewer";
 	private int numAnchors, webLength;
 	private Web web;
+	public WebViewer() {
+		this(new WebDrawer());
+	}
 	public WebViewer(WebDrawer webDrawer) {
 		this(webDrawer, 5, 100);
 	}
@@ -36,6 +39,7 @@ public class WebViewer extends JFrame {
 		this.setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		webDrawer.setPreferredSize(new Dimension(400,400));
 		int fit = webDrawer.buildWeb(numAnchors, webLength);
+		this.setResizable(false);
 		this.add(webDrawer);
 		
 		
