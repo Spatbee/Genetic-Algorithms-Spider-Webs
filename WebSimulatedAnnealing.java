@@ -36,7 +36,7 @@ public class WebSimulatedAnnealing extends JFrame{
 				go.setEnabled(false);
 				Web web = new Web();
 				int maxFitness = 800*(maxAnchors-minAnchors+1);
-				int maxTemp = 300;
+				int maxTemp = 1200;
 				for(int t = maxTemp; t>=0; t--) {
 					boolean choosePrime = false;
 					Web webPrime = web.mutate();
@@ -44,10 +44,13 @@ public class WebSimulatedAnnealing extends JFrame{
 					CompleteSim webPrimeCS = CompleteSim.getSim(webPrime, webLength, minAnchors, maxAnchors);
 					int deltaFitness = webPrimeCS.totalFitness-webCS.totalFitness;
 					if(deltaFitness > 0) choosePrime = true;
+					//if(choosePrime) System.out.println(deltaFitness + " " + t + " 1.0" );
 					else {
-						double p = ((maxFitness+0.0+deltaFitness)/maxFitness)*(0.0+t/maxTemp);
+						double p = Math.pow(((double)maxFitness+(double)deltaFitness)/(double)maxFitness,70)*Math.pow(((double)t/(double)maxTemp),3);
 						if(Math.random()<p)choosePrime = true;
+						//if(choosePrime) System.out.println(deltaFitness + " " + t + " " + p + "   "+(((double)maxFitness+(double)deltaFitness)/(double)maxFitness));
 					}
+					
 					if(choosePrime) {
 						web = webPrime;
 						webDrawer.newWeb(webPrime);
@@ -73,7 +76,10 @@ public class WebSimulatedAnnealing extends JFrame{
 						public void mouseReleased(MouseEvent arg0) {//do nothing
 						}
 					});
+					
+					webDrawer.update(webDrawer.getGraphics());
 					temperature.setText("Temperature: "+t);
+					temperature.update(temperature.getGraphics());
 				}
 				go.setEnabled(true);
 			}

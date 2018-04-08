@@ -27,6 +27,8 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class WebSimulator extends JFrame{
+	private int generationSizeFactor = 6;
+	private int randomPerGeneration = 1;
 	private PriorityQueue<CompleteSim> lastGeneration, thisGeneration, bestAllTimePQ;
 	private static final String windowTitle = "Web Simulator";
 	private WebDrawer[] allTime, lastGen, thisGen, recent;
@@ -312,11 +314,17 @@ public class WebSimulator extends JFrame{
 		validateTextFields();
 		if(firstGen) {
 			firstGen = false;
-			for(int i = 0; i<38; i++) {
+			for(int i = 1; i<=generationSizeFactor; i++) {
+				for(int j = 0; j<i; j++) {
+					CompleteSim cs = runSim(new Web());
+					thisGeneration.add(cs);
+					populateRecent(cs);
+				}
+			}
+			for(int i = 1; i<=randomPerGeneration; i++) {
 				CompleteSim cs = runSim(new Web());
 				thisGeneration.add(cs);
 				populateRecent(cs);
-				
 			}
 			populateBestAllTime();
 			populateBestThisGen();
@@ -326,14 +334,14 @@ public class WebSimulator extends JFrame{
 			lastGeneration = thisGeneration;
 			thisGeneration = new PriorityQueue<CompleteSim>(c); 
 			populateBestLastGen();
-			for(int i = 0; i<2; i++) {
+			for(int i = 0; i<randomPerGeneration; i++) {
 				CompleteSim cs = runSim(new Web());
 				thisGeneration.add(cs);
 				populateRecent(cs);
 			}
-			for(int i = 0; i<8; i++) {
+			for(int i = 0; i<generationSizeFactor; i++) {
 				CompleteSim parent = lastGeneration.remove();
-				for(int j = 8; j>i; j--) {
+				for(int j = generationSizeFactor; j>i; j--) {
 					CompleteSim child = runSim(parent.web.mutate());
 					thisGeneration.add(child);
 					populateRecent(child);
@@ -450,7 +458,7 @@ public class WebSimulator extends JFrame{
 			}
 		}
 		catch(Exception e) {
-			maximumAnchorText.setText(""+Math.max(8, Integer.parseInt(maximumAnchorText.getText())));
+			maximumAnchorText.setText(""+Math.max(8, Integer.parseInt(minimumAnchorText.getText())));
 		}
 	}
 	
