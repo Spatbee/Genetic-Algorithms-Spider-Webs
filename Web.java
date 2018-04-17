@@ -32,6 +32,25 @@ public class Web implements Serializable{
 	public Web mutate() {
 		return new Web(this.start.mutate(), this.end.mutate(), this.startRatio.mutate(), this.endRatio.mutate());
 	}
+	/**
+	 * Returns a mutated version of the combination of this web and another web.  First the webs are combined
+	 * randomly, then the result is mutated as normal.
+	 * @param partner The web that will breed with this one.
+	 * @return The offspring of this Web and another.
+	 */
+	public Web breed(Web partner) {
+		GeneSegment offspringStart, offspringEnd, offspringStartRatio, offspringEndRatio;
+		if(Math.random()<.5) offspringStart = this.start.mutate();
+		else offspringStart = partner.getStartGene().mutate();
+		if(Math.random()<.5) offspringEnd = this.end.mutate();
+		else offspringEnd = partner.getEndGene().mutate();
+		if(Math.random()<.5) offspringStartRatio = this.startRatio.mutate();
+		else offspringStartRatio = partner.getStartRatioGene().mutate();
+		if(Math.random()<.5) offspringEndRatio = this.endRatio.mutate();
+		else offspringEndRatio = partner.getEndRatioGene().mutate();
+		return new Web(offspringStart, offspringEnd, offspringStartRatio, offspringEndRatio);
+	}
+	
 	public String toString() {
 		String startString = "Start: "+this.start.toString()+"\n";
 		String endString = "End: "+this.end.toString()+"\n";
@@ -75,6 +94,33 @@ public class Web implements Serializable{
 	 */
 	public Web copy() {
 		return new Web(start.copy(), end.copy(), startRatio.copy(), endRatio.copy());
+	}
+	
+	/**
+	 * Gets the "start" gene of this Web
+	 * @return
+	 */
+	public GeneSegment getStartGene() {
+		return this.start;
+	}
+	/**
+	 * Gets the "end" gene of this Web
+	 * @return
+	 */
+	public GeneSegment getEndGene() {
+		return this.end;
+	}/**
+	 * Gets the "start ratio" gene of this Web
+	 * @return
+	 */
+	public GeneSegment getStartRatioGene() {
+		return this.startRatio;
+	}/**
+	 * Gets the "end ratio" gene of this Web
+	 * @return
+	 */
+	public GeneSegment getEndRatioGene() {
+		return this.endRatio;
 	}
 	
 	public static void main(String[] args) {

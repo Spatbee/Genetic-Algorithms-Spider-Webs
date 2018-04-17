@@ -17,12 +17,14 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -42,6 +44,7 @@ public class WebSimulator extends JFrame{
 	private transient JTextField generationNumberText, webAmountText, minimumAnchorText, maximumAnchorText;
 	private volatile boolean continueGenerating = false;
 	private JButton save, load;
+	private JRadioButton sexual, asexual;
 	/**
 	 * Creates a WebSimulator.
 	 */
@@ -206,11 +209,32 @@ public class WebSimulator extends JFrame{
 		wrapper7.setPreferredSize(new Dimension(300,30));
 		controls.add(wrapper7);
 		
+		asexual = new JRadioButton("No crossbreeding (asexual)");
+		asexual.setSelected(true);
+		
+		sexual = new JRadioButton("Crossbreeding (sexual)");
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(asexual);
+		group.add(sexual);
+		
+		JPanel wrapper10 = new JPanel();
+		wrapper10.setPreferredSize(new Dimension(300,30));
+		wrapper10.add(asexual);
+		JPanel wrapper11 = new JPanel();
+		wrapper11.setPreferredSize(new Dimension(300,30));
+		wrapper11.add(sexual);
+		
+		controls.add(wrapper10);
+		controls.add(wrapper11);
+		
+		
 		currentWeb.setPreferredSize(new Dimension(300,300));
 //		currentWeb.setMaximumSize(new Dimension(600,300));
 		JPanel wrapper3 = new JPanel();
 		wrapper3.add(currentWeb);
 		controls.add(wrapper3);
+		
 		
 		save = new JButton("Save");
 		save.addActionListener(new ActionListener() {
@@ -249,7 +273,7 @@ public class WebSimulator extends JFrame{
 		wrapper9.setPreferredSize(new Dimension(300,30));
 		controls.add(wrapper9);
 		
-
+		
 		this.add(controls);
 		
 		this.pack();
@@ -339,13 +363,28 @@ public class WebSimulator extends JFrame{
 				thisGeneration.add(cs);
 				populateRecent(cs);
 			}
-			for(int i = 0; i<generationSizeFactor; i++) {
-				CompleteSim parent = lastGeneration.remove();
-				for(int j = generationSizeFactor; j>i; j--) {
-					CompleteSim child = runSim(parent.web.mutate());
-					thisGeneration.add(child);
-					populateRecent(child);
-					
+			if(asexual.isSelected()) {
+				for(int i = 0; i<generationSizeFactor; i++) {
+					CompleteSim parent = lastGeneration.remove();
+					for(int j = generationSizeFactor; j>i; j--) {
+						CompleteSim child = runSim(parent.web.mutate());
+						thisGeneration.add(child);
+						populateRecent(child);
+						
+					}
+				}
+			}
+			else {
+				//Best individual in this generation can breed with the most, they breed randomly with preference to better individuals.
+				//And yes, they can breed with themselves.
+				ArrayList<CompleteSim> population = new ArrayList<CompleteSim>();
+				while(!lastGeneration.isEmpty()) population.add(lastGeneration.remove());
+				for(int i = 0; i<generationSizeFactor; i++) {
+					for(int j = generationSizeFactor; j>i; j--) {
+						CompleteSim child = runSim(population.get(i).web.breed(population.get((int)(Math.random()*Math.random()*population.size())).web));
+						thisGeneration.add(child);
+						populateRecent(child);
+					}
 				}
 			}
 			populateBestAllTime();
@@ -476,6 +515,8 @@ public class WebSimulator extends JFrame{
 	private void setButtonsEnabled(boolean enabled) {
 		save.setEnabled(enabled);
 		load.setEnabled(enabled);
+		asexual.setEnabled(enabled);
+		sexual.setEnabled(enabled);
 	}
 	
 	/**
